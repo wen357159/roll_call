@@ -10,9 +10,9 @@
             <div class="input">
                 <h2>
                     GOOGLE試算表連結:<br>
-                    <input id="url_excel" placeholder="右圖藍色框取得共用連結(綠色框須為編輯者"><br><br>
+                    <input id="url_excel" placeholder="右圖藍框取得共用連結(綠框須為編輯者"><br><br>
                     GOOGLE工作表名稱:<br>
-                    <input id="excel_name" placeholder="右圖紅色框">
+                    <input id="excel_name" placeholder="右圖紅框">
                     <button id="btn_url_excel">送出</button>
                 </h2>
                 <h2 class="hint">
@@ -34,6 +34,14 @@
             </h2>
         </div>
         <div id="no2">
+            <div class="people">
+                <p style="display:inline;">總人數:</p>
+                <p id="total">0</p>
+                <p>出席:</p>
+                <p id="attendance">0</p>
+                <p>缺席:</p>
+                <p id="absent">0</p>
+            </div>
             <div class='box'>
                 <p id="btn_name"></p>
             </div>
@@ -50,8 +58,9 @@
         btn_name = $('#btn_name'),
         use_time = $('#use_time'),
         att_lst = $('#att_lst'),
-        test = $('#test'),
-        test1 = $('#test1')
+        total = $('#total'),
+        attendance = $('#attendance'),
+        absent = $('#absent')
 
         btn_url_excel.on('click', function(){
             url_excel = document.getElementById('url_excel').value;
@@ -81,6 +90,7 @@
                 }
                 document.getElementById('att_lst').innerHTML = attend_lst;
                 document.getElementById("btn_name").innerHTML = text;
+                document.getElementById('total').innerHTML = name_lst.length;
                 end = new Date().getTime();
                 document.getElementById("use_time").innerHTML = (end - start) / 1000 + "sec";
             })
@@ -89,15 +99,21 @@
         function attend(a){
             lst = document.getElementById('att_lst').innerText //取得attend_lst
             lst = lst.split(',') //字串轉list
+            sum = Number(document.getElementById('attendance').innerText);
+            total = Number(document.getElementById('total').innerText)
             if(lst[a] == 0){
                 lst[a] = 1;
+                sum += 1;
                 document.getElementById('att_lst').innerHTML = lst;
                 document.getElementById('btn'+a).style.backgroundColor = '#C4E1FF'; 
             }else if(lst[a] == 1){
                 lst[a] = 0;
+                sum -= 1;
                 document.getElementById('att_lst').innerHTML = lst;
                 document.getElementById('btn'+a).style.backgroundColor = '#F0F0F0'; 
             }
+            document.getElementById('attendance').innerHTML = sum;
+            document.getElementById('absent').innerHTML = total-sum;
         }
 
         function ShowTime(){
