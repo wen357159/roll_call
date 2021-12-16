@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+        <link href="點名系統.css" rel="stylesheet" type="text/css">
+    </head>
+    <body  onload = "ShowTime()">
+        <h1>點名系统</h1>
+        <div id="no1">
+            <div class="input">
+                <h2>
+                    GOOGLE試算表連結:<br>
+                    <input id="url_excel" placeholder="右圖藍色框取得共用連結(綠色框須為編輯者"><br><br>
+                    GOOGLE工作表名稱:<br>
+                    <input id="excel_name" placeholder="右圖紅色框">
+                    <button id="btn_url_excel">送出</button>
+                </h2>
+                <h2 class="hint">
+                    格式請務必遵照範例<br>
+                        藍框取得共用連結(綠框須為編輯者)
+                        工作表名稱為紅框<br><br>
+                    前兩行為號碼及姓名<br>
+                    否則送出後會出錯
+                </h2>
+            </div>
+            <img src="pic\excel_EX.jpg" class="excel_EX">
+        </div>
+        <div id="time">
+            <h2 class="time">
+                <div id='timenow'></div>
+                從網路抓取資料會需要時間 請稍等片刻<br>
+                使用時間: 
+                <p id="use_time" style="display:inline;"></p>
+            </h2>
+        </div>
+        <div id="no2">
+            <div class='box'>
+                <p id="btn_name"></p>
+            </div>
+            <button id="btn_ok" class="btn_ok" onclick="send()">上傳</button>
+            <input type="button" value="查看google試算表" class="check" onclick="window.open(url_excel)">
+        </div>
+        <p id="att_lst"></p>
+    </body>
+
+    <script type="text/javascript">
+        var url_excel = $('#url_excel'),
+        excel_name = $('#excel_name'),
+        btn_url_excel = $('#btn_url_excel'),
+        btn_name = $('#btn_name'),
+        use_time = $('#use_time'),
+        att_lst = $('#att_lst'),
+        test = $('#test'),
+        test1 = $('#test1')
+
+        btn_url_excel.on('click', function(){
+            url_excel = document.getElementById('url_excel').value;
+            excel_name = document.getElementById('excel_name').value;
+
+            document.getElementById('no1').style.display = 'none';
+            document.getElementById('time').style.display = 'block';
+            document.getElementById('no2').style.display = 'block';
+
+            parameter = {
+                mode: 'name',
+                url: url_excel,
+                name: excel_name
+            };
+            var text = ''; //按鈕
+            var name_lst = [] //名字
+            var attend_lst = []; //出席
+            var start = new Date().getTime();
+            $.get("https://script.google.com/macros/s/AKfycbwxjeG0yGrinr5d-EqMbCpOGVeofV_BL0_p_zYZUb4Hrf3yng7yo6j0IfmbyUeddV46/exec", parameter, function(data) {
+                arrs = data.split(','); //字串
+                for(var i = 0; i < arrs.length; i += 2){
+                    name_lst.push([arrs[i],arrs[i+1]])
+                }
+                for(var i = 0; i < name_lst.length; i ++){
+                    attend_lst.push(0)
+                    text += '<button id = "btn' + i + '" class = "btn" onclick="attend(' + i + ')">' + name_lst[i][0] + '<br>' + name_lst[i][1] + '</button>'
+                }
+                document.getElementById('att_lst').innerHTML = attend_lst;
+                document.getElementById("btn_name").innerHTML = text;
+                end = new Date().getTime();
+                document.getElementById("use_time").innerHTML = (end - start) / 1000 + "sec";
+            })
+        })
+
+        function attend(a){
+            lst = document.getElementById('att_lst').innerText //取得attend_lst
+            lst = lst.split(',') //字串轉list
+            if(lst[a] == 0){
+                lst[a] = 1;
+                document.getElementById('att_lst').innerHTML = lst;
+                document.getElementById('btn'+a).style.backgroundColor = '#C4E1FF'; 
+            }else if(lst[a] == 1){
+                lst[a] = 0;
+                document.getElementById('att_lst').innerHTML = lst;
+                document.getElementById('btn'+a).style.backgroundColor = '#F0F0F0'; 
+            }
+        }
+
+        function ShowTime(){
+            document.getElementById('timenow').innerHTML = new Date();
+            setTimeout('ShowTime()',1000);
+        }
+
+        function send(){
+            if(confirm('確定送出嗎?')){
+                start = new Date().getTime();
+                var data0 = '';
+                lst = document.getElementById('att_lst').innerText //字串(0,0,0,1,1,0,0,1,1,0)
+                for(var i in lst){
+                    if(i % 2 == 0){
+                        data0 += lst[i]
+                    }
+                }
+                parameter = {
+                    mode: 'write',
+                    data : data0, //字串(0001100110)
+                    url: document.getElementById('url_excel').value,
+                    name: document.getElementById('excel_name').value
+                };
+                $.get("https://script.google.com/macros/s/AKfycbwxjeG0yGrinr5d-EqMbCpOGVeofV_BL0_p_zYZUb4Hrf3yng7yo6j0IfmbyUeddV46/exec", parameter, function(data) {
+                    end = new Date().getTime();
+                    alert('上傳完成\n使用時間: ' + (end - start) / 1000 + "sec")
+                })
+                //歸0
+                var zero = '';
+                for(var i = 0;i < lst.length ; i++){
+                    if(lst[i] != ','){
+                    zero += 0
+                    }else{
+                    zero +=','
+                    }
+                }
+                for(var i = 0;i < (lst.length+1)/2; i++){
+                    document.getElementById('btn'+i).style.backgroundColor = '#F0F0F0'; 
+                }
+                document.getElementById('att_lst').innerHTML = zero;
+            }else{
+                alert('再次確認吧')
+            }   
+        }
+    </script>
+
+</html>
+
