@@ -75,6 +75,13 @@ input{
     margin: 20px;
 }
 
+.people{
+    font-size: 30px;
+    position: fixed;
+    right: 30px;
+    top: 30px;
+}
+
 .box{ /* 整體名字 */
     width: 80%;
     border: 1px rgb(0, 0, 0) none; /* 邊框: 粗細 顏色 樣式 */
