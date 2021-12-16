@@ -36,11 +36,11 @@
         <div id="no2">
             <div class="people">
                 <p style="display:inline;">總人數:</p>
-                <p id="total">0</p>
+                <p id="total"></p>
                 <p>出席:</p>
-                <p id="attendance">0</p>
+                <p id="attendance"></p>
                 <p>缺席:</p>
-                <p id="absent">0</p>
+                <p id="absent"></p>
             </div>
             <div class='box'>
                 <p id="btn_name"></p>
@@ -91,6 +91,8 @@
                 document.getElementById('att_lst').innerHTML = attend_lst;
                 document.getElementById("btn_name").innerHTML = text;
                 document.getElementById('total').innerHTML = name_lst.length;
+                document.getElementById('attendance').innerHTML = 0;
+                document.getElementById('absent').innerHTML = name_lst.length;
                 end = new Date().getTime();
                 document.getElementById("use_time").innerHTML = (end - start) / 1000 + "sec";
             })
